@@ -16,13 +16,18 @@ Example configuration:
 
 ```javascript
 const path = require("path");
-const MailerQ = require("mailer-q")();
+const MailerQ = require("mailer-q").default;
+// or, with ESM / TypeScript: import MailerQ from "mailer-q";
 const MailerQEjs = require("mailer-q-ejs");
 
 const options = {
   ...otherOptionsHere,
-  renderer: MailerQEjs(path.join(__dirname, "./email_templates"))
+  renderer: MailerQEjs(path.join(__dirname, "./email_templates")),
 };
 
-module.exports = MailerQ.config(options);
+module.exports = MailerQ(options);
 ```
+
+> **Requires MailerQ v3+.** In v2, MailerQ was created with `require("mailer-q")()`
+> and configured via `.config(options)`. See the
+> [MailerQ v3 upgrade notes](https://github.com/Mailer-Q/Mailer-Q#upgrading-from-v2).
