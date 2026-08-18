@@ -1,4 +1,17 @@
-# MailerQ EJS Plugin
+# Mailer-Q-EJS
+
+[![npm version](https://img.shields.io/npm/v/mailer-q-ejs.svg)](https://www.npmjs.com/package/mailer-q-ejs)
+[![npm downloads](https://img.shields.io/npm/dm/mailer-q-ejs.svg)](https://www.npmjs.com/package/mailer-q-ejs)
+[![CI](https://github.com/Mailer-Q/Mailer-Q-EJS/actions/workflows/ci.yml/badge.svg)](https://github.com/Mailer-Q/Mailer-Q-EJS/actions/workflows/ci.yml)
+[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-3178C6.svg)](https://www.typescriptlang.org/)
+[![node](https://img.shields.io/node/v/mailer-q-ejs.svg)](https://nodejs.org/)
+[![license](https://img.shields.io/npm/l/mailer-q-ejs.svg)](./LICENSE)
+
+An [EJS](https://ejs.co/) template renderer for [MailerQ](https://github.com/Mailer-Q/Mailer-Q).
+It lets MailerQ render email bodies from `.ejs` template files instead of inline HTML.
+
+A MailerQ renderer is any function `(templateFileName, locals) => htmlString`. This package
+provides one backed by EJS.
 
 ## Installation
 
@@ -8,11 +21,8 @@ npm install mailer-q-ejs --save
 
 ## Usage
 
-- This plugin is an extension of the [MailerQ](https://github.com/mailer-q/mailer-q) module for sending email.
-- It enables MailerQ to use EJS templating to send email.
-- To use this extension, simply require the module and call the resulting function with the path to your email templates as an argument.
-
-Example configuration:
+Call the module with the directory that holds your email templates, then pass the result as
+MailerQ's `renderer` option:
 
 ```javascript
 const path = require("path");
@@ -21,13 +31,44 @@ const MailerQ = require("mailer-q").default;
 const MailerQEjs = require("mailer-q-ejs");
 
 const options = {
-  ...otherOptionsHere,
+  // ...other MailerQ options
   renderer: MailerQEjs(path.join(__dirname, "./email_templates")),
 };
 
 module.exports = MailerQ(options);
 ```
 
+Then reference a template by file name when building a message, passing template variables
+through `locals`:
+
+```javascript
+MailerQ.contents({
+  to: "recipient@example.com",
+  subject: "Welcome!",
+  templateFileName: "welcome.ejs",
+  locals: { name: "Ada" },
+}).deliverNow();
+```
+
+`email_templates/welcome.ejs`:
+
+```html
+<h1>Welcome, <%= name %>!</h1>
+```
+
 > **Requires MailerQ v3+.** In v2, MailerQ was created with `require("mailer-q")()`
 > and configured via `.config(options)`. See the
 > [MailerQ v3 upgrade notes](https://github.com/Mailer-Q/Mailer-Q#upgrading-from-v2).
+
+## Development
+
+This package is written in TypeScript and compiled to `dist/` with `tsc`.
+
+```bash
+npm run build   # compile TypeScript to dist/
+npm run lint    # eslint
+```
+
+## License
+
+[MIT](./LICENSE)
